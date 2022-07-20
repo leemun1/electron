@@ -129,7 +129,12 @@ if ((globalThis.process || binding.process).argv.includes("--profile-electron-in
           // Force timers to resolve to our dependency that doesn't use window.postMessage
           timers: path.resolve(electronRoot, 'node_modules', 'timers-browserify', 'main.js')
         },
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js'],
+        fallback: {
+          // We provide our own "timers" import above, any usage of setImmediate inside
+          // one of our renderer bundles should import it from the 'timers' package
+          setImmediate: false
+        }
       },
       module: {
         rules: [{
@@ -150,10 +155,7 @@ if ((globalThis.process || binding.process).argv.includes("--profile-electron-in
       },
       node: {
         __dirname: false,
-        __filename: false,
-        // We provide our own "timers" import above, any usage of setImmediate inside
-        // one of our renderer bundles should import it from the 'timers' package
-        setImmediate: false
+        __filename: false
       },
       optimization: {
         minimize: env.mode === 'production',

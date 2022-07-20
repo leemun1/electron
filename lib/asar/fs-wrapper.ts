@@ -192,7 +192,7 @@ const overrideAPI = function (module: Record<string, any>, name: string, pathArg
     module[name][util.promisify.custom] = makePromiseFunction(old[util.promisify.custom], pathArgumentIndex);
   }
 
-  if (module.promises && module.promises[name]) {
+  if (module.promises?.[name]) {
     module.promises[name] = makePromiseFunction(module.promises[name], pathArgumentIndex);
   }
 };
@@ -691,7 +691,7 @@ export const wrapFsWithAsar = (fs: Record<string, any>) => {
       throw createError(AsarError.NOT_FOUND, { asarPath, filePath });
     }
 
-    if (options && (options as ReaddirSyncOptions).withFileTypes) {
+    if ((options as ReaddirSyncOptions)?.withFileTypes) {
       const dirents = [];
       for (const file of files) {
         const childPath = path.join(filePath, file);
