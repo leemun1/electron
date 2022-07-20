@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: VerteDinde <vertedinde@electronjs.org>
+Date: Tue, 19 Jul 2022 22:12:13 -0700
+Subject: fix: enable /LARGEADDRESSAWARE in ia32 breakpad dump_syms
+
+dump_syms was running out of virtual memory space on ia32 Windows.
+This patch passes in the large-address-aware compiler flag, to give
+us access to addresses larger than 2 GB. This is enabled by default
+for 64 bit compilers, so no ia32 check is necessary.
+
+Upstream does not seem to be affected by this, as the build failure
+happens when building electron-specific symbols. This patch likely
+won't be upstreamed for that reason.
+
+diff --git a/third_party/breakpad/BUILD.gn b/third_party/breakpad/BUILD.gn
+index 2df7b35f3e27680410654738f9ca2f2924bc2148..dcc07233a43c51c39404983dbf223deca35652b7 100644
+--- a/third_party/breakpad/BUILD.gn
++++ b/third_party/breakpad/BUILD.gn
+@@ -902,6 +902,8 @@ if (is_win) {
+ 
+       deps = [ "//third_party/breakpad:common_windows" ]
+ 
++      ldflags = [ "/LARGEADDRESSAWARE" ]
++
+       lib_dirs = []
+       if (current_cpu == "x64") {
+         lib_dirs += [ "$visual_studio_path/DIA SDK/lib/amd64" ]
