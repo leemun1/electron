@@ -35,7 +35,7 @@ environment:
   MOCHA_MULTI_REPORTERS: mocha-appveyor-reporter, tap
   GOMA_FALLBACK_ON_AUTH_FAILURE: true
 build_script:
-  - FOR /L %i IN (1,1,100) DO (echo does this work %%i )
+  - FOR /L %%i IN (1,1,100) DO (echo does this work %%i )
   - ps: >-
       if(($env:APPVEYOR_PULL_REQUEST_HEAD_REPO_NAME -split "/")[0] -eq ($env:APPVEYOR_REPO_NAME -split "/")[0]) {
         Write-warning "Skipping PR build for branch"; Exit-AppveyorBuild
@@ -205,7 +205,7 @@ test_script:
         echo "Skipping tests for $env:GN_CONFIG build"
       }
   - cd electron
-  - FOR /L %i IN (1,1,100) DO (echo Running remote chromium test suite %%i & node script/yarn test --trace-uncaught --runners=remote --files spec\chromium-spec.js )
+  - FOR /L %%i IN (1,1,100) DO (echo Running remote chromium test suite %%i & node script/yarn test --trace-uncaught --runners=remote --files spec\chromium-spec.js )
   - cd ..
   - if "%RUN_TESTS%"=="true" ( echo Verifying non proprietary ffmpeg & python electron\script\verify-ffmpeg.py --build-dir out\Default --source-root %cd% --ffmpeg-path out\ffmpeg )
   - echo "About to verify mksnapshot"
